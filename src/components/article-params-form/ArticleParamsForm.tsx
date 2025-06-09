@@ -4,11 +4,12 @@ import { Select } from 'src/ui/select';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
 import { Text } from 'src/ui/text';
-import { useState } from "react";
+import { useState, useRef } from "react";
 import clsx from 'clsx';
 import { fontFamilyOptions, fontSizeOptions, fontColors, backgroundColors, contentWidthArr } from 'src/constants/articleProps';
 import { OptionType, ArticleStateType, defaultArticleState } from 'src/constants/articleProps';
 import type { FormEvent } from 'react';
+import { useOutsideClickClose } from 'src/ui/select/hooks/useOutsideClickClose';
 
 import styles from './ArticleParamsForm.module.scss';
 
@@ -23,6 +24,9 @@ export const ArticleParamsForm = ({ onChange }: ArticleParamsFormProps) => {
 	const [fontFamily, setFontFamily] = useState<OptionType>(defaultArticleState.fontFamilyOption);
 	const [backgroundColor, setBackgroundColor] = useState<OptionType>(defaultArticleState.backgroundColor);
 	const [contentWidth, setContentWidth] = useState<OptionType>(defaultArticleState.contentWidth);
+	const rootRef = useRef<HTMLDivElement>(null);
+
+	useOutsideClickClose({ isOpen, rootRef, onClose: undefined, onChange: setOpen });
 
 	function handleFontSizeChange(value: OptionType) {
       setFontSize(value);
@@ -75,7 +79,7 @@ export const ArticleParamsForm = ({ onChange }: ArticleParamsFormProps) => {
 	return (
 		<>
 			<ArrowButton isOpen={isOpen} onClick={handleArrowClick} />
-			<aside className={clsx({[styles.container]: true, [styles.container_open]: isOpen})}>
+			<aside className={clsx({[styles.container]: true, [styles.container_open]: isOpen})} ref={rootRef}>
 				<form className={styles.form} onSubmit={onApply}>
 					<Text size={31} weight={800} uppercase>Задайте параметры</Text>
 					<Select title='Шрифт' options={fontFamilyOptions} selected={fontFamily} onChange={handleFontFamilyChange} />
